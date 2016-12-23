@@ -17,7 +17,8 @@ server {
 	# Paths to certificate files.
   ssl_certificate /etc/letsencrypt/live/SITE_DOMAIN/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/SITE_DOMAIN/privkey.pem;
-
+	# SSL rules
+  include global/server/ssl.conf;
 
 	# File to be used as index
 	index index.html index.php;
@@ -43,8 +44,7 @@ server {
 	# Fastcgi cache rules
 	include global/server/fastcgi-cache.conf;
 
-	# SSL rules
-	include global/server/ssl.conf;
+
 
 	location / {
 		try_files $uri $uri/ /index.php?$args;
@@ -52,6 +52,7 @@ server {
 
 	location ~ \.php$ {
 		try_files $uri =404;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
 		include global/fastcgi-params.conf;
 
 		# Change socket if using PHP pools or PHP 5
@@ -89,6 +90,11 @@ server {
 	listen 443;
 	listen [::]:443;
 	server_name www.SITE_DOMAIN;
+	# Paths to certificate files.
+  ssl_certificate /etc/letsencrypt/live/SITE_DOMAIN/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/SITE_DOMAIN/privkey.pem;
+	# SSL rules
+  include global/server/ssl.conf;
 
 	return 301 https://SITE_DOMAIN$request_uri;
 }
